@@ -8,6 +8,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Component
@@ -30,7 +31,7 @@ final class ReplyConsumer {
         final var correlationId = consumerRecord.headers().lastHeader(HEADER_ID);
         final var topic = consumerRecord.headers().lastHeader(HEADER_REPLY_CHANNEL);
 
-        final var responseRecord = new ProducerRecord<String, String>(new String(topic.value()), "pong");
+        final var responseRecord = new ProducerRecord<String, String>(new String(topic.value(), StandardCharsets.UTF_8), "pong");
         responseRecord.headers().add(HEADER_ID, UUID.randomUUID().toString().getBytes());
         responseRecord.headers().add(HEADER_CORRELATION_ID, correlationId.value());
 
