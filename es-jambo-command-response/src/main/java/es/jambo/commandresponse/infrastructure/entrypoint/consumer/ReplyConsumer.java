@@ -4,6 +4,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,8 @@ final class ReplyConsumer {
     public static final String HEADER_CORRELATION_ID = "correlation_id";
     public static final String TOPIC_COMMAND_REQUEST = "command.request";
     public static final String TOPIC_COMMAND_RESPONSE = "command.response";
+    @Value("${nodename}")
+    public String nodeName;
     private KafkaTemplate<String, String> kafkaTemplate;
 
     public ReplyConsumer(KafkaTemplate<String, String> kafkaTemplate) {
@@ -31,7 +34,7 @@ final class ReplyConsumer {
         final var correlationId = consumerRecord.headers().lastHeader(HEADER_ID);
         final var topic = consumerRecord.headers().lastHeader(HEADER_REPLY_CHANNEL);
 
-        final var responseRecord = new ProducerRecord<String, String>(new String(topic.value(), StandardCharsets.UTF_8), "pong");
+        final var responseRecord = new ProducerRecord<String, String>(new String(topic.value(), StandardCharsets.UTF_8), String.format("%s: pong", nodeName));
         responseRecord.headers().add(HEADER_ID, UUID.randomUUID().toString().getBytes());
         responseRecord.headers().add(HEADER_CORRELATION_ID, correlationId.value());
 

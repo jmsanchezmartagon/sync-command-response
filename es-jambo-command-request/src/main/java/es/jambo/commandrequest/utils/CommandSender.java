@@ -36,7 +36,7 @@ public class CommandSender {
         commandMessage.headers().add(REPLY_CHANNEL, replyTo.getBytes())
                 .add(ID, id.getBytes());
         var result = kafkaTemplate.send(commandMessage).get();
-        logger.debug("Sent topic:{} partition:{}", result.getProducerRecord().topic(),
+        logger.info("Sent topic:{} partition:{}", result.getProducerRecord().topic(),
                 result.getRecordMetadata().partition());
 
 
