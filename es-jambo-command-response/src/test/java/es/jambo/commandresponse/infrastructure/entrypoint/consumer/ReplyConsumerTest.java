@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -19,6 +20,7 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +35,8 @@ class ReplyConsumerTest {
     private KafkaTemplate<String, String> kafkaTemplate;
     @Autowired
     private KafkaListenerEndpointRegistry endpointRegistry;
+    @Value("${nodename}")
+    private String nodeName;
     private ConsumerRecord<String, String> consumerRecord;
 
     @SpyBean
@@ -50,22 +54,22 @@ class ReplyConsumerTest {
     void should_sendResponseMessage_when_recivedMessageCommand() {
         final var id = UUID.randomUUID().toString();
         final var requestMessage = "ping";
-        final var expectedResponseMessage = "pong";
+        final var expectedResponseMessage = String.format("%s: pong", nodeName);
 
         sendCommandMessage(id, requestMessage);
 
         waitResponse();
         Assertions.assertThat(consumerRecord).isNotNull();
         Assertions.assertThat(consumerRecord.headers().lastHeader(ReplyConsumer.HEADER_ID)).isNotNull();
-        Assertions.assertThat(consumerRecord.headers().lastHeader(ReplyConsumer.HEADER_CORRELATION_ID).value()).isEqualTo(id.getBytes());
+        Assertions.assertThat(consumerRecord.headers().lastHeader(ReplyConsumer.HEADER_CORRELATION_ID).value()).isEqualTo(id.getBytes(StandardCharsets.UTF_8));
         Assertions.assertThat(consumerRecord.value()).isEqualTo(expectedResponseMessage);
         Mockito.verify(replyConsumer, Mockito.times(1)).onMessage(Mockito.isA(ConsumerRecord.class));
     }
 
     private void sendCommandMessage(String id, String body) {
         final var record = new ProducerRecord<String, String>(ReplyConsumer.TOPIC_COMMAND_REQUEST, body);
-        record.headers().add(ReplyConsumer.HEADER_REPLY_CHANNEL, ReplyConsumer.TOPIC_COMMAND_RESPONSE.getBytes())
-                .add(ReplyConsumer.HEADER_ID, id.getBytes());
+        record.headers().add(ReplyConsumer.HEADER_REPLY_CHANNEL, ReplyConsumer.TOPIC_COMMAND_RESPONSE.getBytes(StandardCharsets.UTF_8))
+                .add(ReplyConsumer.HEADER_ID, id.getBytes(StandardCharsets.UTF_8));
         final var result = kafkaTemplate.send(record);
         result.whenComplete((successResult, failException) ->
                 Assertions.assertThat(failException).isNull()

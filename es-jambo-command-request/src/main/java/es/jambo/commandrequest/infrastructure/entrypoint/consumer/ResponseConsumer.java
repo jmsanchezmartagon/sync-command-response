@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author jmsanchez
+ * @author Juan Manuel Sánchez Martagón <jmsanchezmartagon@gmail.com>
  */
 @Component
 final class ResponseConsumer {

@@ -35,7 +35,7 @@ final class ReplyConsumer {
         final var topic = consumerRecord.headers().lastHeader(HEADER_REPLY_CHANNEL);
 
         final var responseRecord = new ProducerRecord<String, String>(new String(topic.value(), StandardCharsets.UTF_8), String.format("%s: pong", nodeName));
-        responseRecord.headers().add(HEADER_ID, UUID.randomUUID().toString().getBytes());
+        responseRecord.headers().add(HEADER_ID, UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
         responseRecord.headers().add(HEADER_CORRELATION_ID, correlationId.value());
 
         final var result = kafkaTemplate.send(responseRecord);
