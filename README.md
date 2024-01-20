@@ -64,9 +64,17 @@ and flexibility, so you should be careful.
 
 ## How to test and play
 
-This repo include a docker-compose to test the solution. To deploy it you only have to execute: docker-compose up and
-they are deployed two request services (8080/8081) with two response services (8082/8083), a zookeeper and a kafka
+This repo contains a docker-compose to test the solution. To deploy it, just run: docker-compose up and
+they will be deployed two request services (8080/8081) with two response services (8082/8083), a zookeeper and a kafka
 service (9092).
+
+![services.png](doc%2Fservices.png)
+
+Deploying
+
+```
+$ docker-compose up
+```
 
 ![deployed_services.png](doc%2Fdeployed_services.png)
 
@@ -85,6 +93,6 @@ $ curl http://localhost:8080/command
 RecordHeader(value = server.response.1: pong)
 ```
 
-The response is a ConsumerRecord which contains all data that you need to check the journey.
-![services.png](doc%2Fservices.png)
+The response is a consumer record which contains all the data that you need to check who is responding and who is
+reading.
 
