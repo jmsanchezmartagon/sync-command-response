@@ -36,7 +36,7 @@ public class CommandSender {
 
         final var id = UUID.randomUUID().toString();
 
-        final var commandMessage = new ProducerRecord<Integer, String>(TOPIC_COMMAND_REQUEST, message);
+        final var commandMessage = new ProducerRecord<Integer, String>(TOPIC_COMMAND_REQUEST, id.hashCode(), message);
         commandMessage.headers().add(REPLY_CHANNEL, replyTo.getBytes(StandardCharsets.UTF_8))
                 .add(ID, id.getBytes(StandardCharsets.UTF_8));
         var result = kafkaTemplate.send(commandMessage).get();

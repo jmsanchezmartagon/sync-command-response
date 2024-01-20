@@ -1,4 +1,4 @@
-version: "3"
+version: "3.9"
 services:
   zookeeper:
     build: .
@@ -16,3 +16,69 @@ services:
       - "9092:9092"
     depends_on:
       - zookeeper
+  requester1:
+    build:
+      context: .
+      dockerfile: ./DockerfileApp
+    environment:
+      nodename: "server.request.1"
+      server.port: 8080
+      kafka.topic.command.response: "topic.server.request.1"
+    entrypoint: java -jar es-jambo-command-request-0.0.1-SNAPSHOT.jar
+    volumes:
+      - ./es-jambo-command-request/target:/opt/app
+    expose:
+      - 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kafka
+  requester2:
+    build:
+      context: .
+      dockerfile: ./DockerfileApp
+    environment:
+      nodename: "server.request.2"
+      server.port: 8081
+      kafka.topic.command.response: "topic.server.request.2"
+    entrypoint: java -jar es-jambo-command-request-0.0.1-SNAPSHOT.jar
+    volumes:
+      - ./es-jambo-command-request/target:/opt/app
+    expose:
+      - 8081
+    ports:
+      - "8081:8081"
+    depends_on:
+      - kafka
+  response1:
+    build:
+      context: .
+      dockerfile: ./DockerfileApp
+    environment:
+      nodename: "server.response.1"
+      server.port: 8082
+    entrypoint: java -jar es-jambo-command-response-0.0.1-SNAPSHOT.jar
+    volumes:
+      - ./es-jambo-command-response/target:/opt/app
+    expose:
+      - 8082
+    ports:
+      - "8082:8082"
+    depends_on:
+      - kafka
+  response2:
+    build:
+      context: .
+      dockerfile: ./DockerfileApp
+    environment:
+      nodename: "server.response.2"
+      server.port: 8083
+    entrypoint: java -jar es-jambo-command-response-0.0.1-SNAPSHOT.jar
+    volumes:
+      - ./es-jambo-command-response/target:/opt/app
+    expose:
+      - 8083
+    ports:
+      - "8083:8083"
+    depends_on:
+      - kafka
