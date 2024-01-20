@@ -62,7 +62,7 @@ of the operations.
 Although sometimes is necessary, this approach presents significant drawbacks, such as reduce availability, scalability
 and flexibility, so you should be careful.
 
-## How to test and play
+## How to test
 
 This repo contains a docker-compose to test the solution. To deploy it, just run: docker-compose up and
 they will be deployed two request services (8080/8081) with two response services (8082/8083), a zookeeper and a kafka
@@ -96,3 +96,13 @@ RecordHeader(value = server.response.1: pong)
 The response is a consumer record which contains all the data that you need to check who is responding and who is
 reading.
 
+Finally, we will see how this solution can be more available than other classical solutions. If you stop the 'response
+server' that is responding, you will notice that the other 'response server' is responding.
+it. So here we have a typical example of the resiliency and availability that every microservice environment must have.
+
+```
+$ docker-compose stop response.service.1
+$ curl http://localhost:8080/command
+> ConsumerRecord(topic = topic.server.request.1, partition = 0, headers = ...), 
+RecordHeader(value = server.response.2: pong)
+```
