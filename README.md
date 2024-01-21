@@ -97,8 +97,8 @@ The response is a consumer record which contains all the data that you need to c
 reading.
 
 Finally, we will see how this solution can be more available than other classical solutions. If you stop the 'response
-server' that is responding, you will notice that the other 'response server' is responding.
-it. So here we have a typical example of the resiliency and availability that every microservice environment must have.
+server' that is responding, you will notice that the other 'response server' is responding
+it. So, here we have a typical example of the resiliency and availability that every microservice environment must have.
 
 ```
 $ docker-compose stop response.service.1
