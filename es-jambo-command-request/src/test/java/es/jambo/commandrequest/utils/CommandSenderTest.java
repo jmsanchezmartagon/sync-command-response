@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException;
  * @author Juan Manuel Sánchez Martagón <jmsanchezmartagon@gmail.com>
  */
 @SpringBootTest
-@EmbeddedKafka(topics = {CommandSender.TOPIC_COMMAND_REQUEST, "${kafka.topic.command.response}"},
+@EmbeddedKafka(topics = {CommandSender.TOPIC_COMMAND_REQUEST, "${kafka.topic.command.response}_${nodename}"},
         partitions = 1,
         brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092", "auto.create.topics.enable=true"})
 class CommandSenderTest {
@@ -32,7 +32,7 @@ class CommandSenderTest {
     private EmbeddedKafkaBroker embeddedKafkaBroker;
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
-    @Value("${kafka.topic.command.response}")
+    @Value("${kafka.topic.command.response}_${nodename}")
     private String replyTo;
     @Autowired
     private CommandSender commandSender;

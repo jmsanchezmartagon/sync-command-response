@@ -24,7 +24,7 @@ public class CommandSender {
     private static final Logger logger = LoggerFactory.getLogger(CommandSender.class);
     public static final String TOPIC_COMMAND_REQUEST = "command.request";
 
-    @Value("${kafka.topic.command.response}")
+    @Value("${kafka.topic.command.response}_${nodename}")
     public String replyTo;
     private final KafkaTemplate<Integer, String> kafkaTemplate;
 

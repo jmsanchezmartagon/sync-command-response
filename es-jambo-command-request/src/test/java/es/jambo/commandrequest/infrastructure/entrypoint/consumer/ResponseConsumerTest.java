@@ -30,11 +30,11 @@ import java.util.concurrent.TimeUnit;
  * @author Juan Manuel Sánchez Martagón <jmsanchezmartagon@gmail.com>
  */
 @SpringBootTest
-@EmbeddedKafka(topics = {"${kafka.topic.command.response}"},
+@EmbeddedKafka(topics = {"${kafka.topic.command.response}_${nodename}"},
         partitions = 1,
         brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092", "auto.create.topics.enable=true"})
 class ResponseConsumerTest {
-    @Value("${kafka.topic.command.response}")
+    @Value("${kafka.topic.command.response}_${nodename}")
     private String responseTopic;
     @Autowired
     private EmbeddedKafkaBroker embeddedKafkaBroker;

@@ -18,7 +18,7 @@ final class ResponseConsumer {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseConsumer.class);
 
-    @KafkaListener(topics = {"${kafka.topic.command.response}"})
+    @KafkaListener(topics = {"${kafka.topic.command.response}_${nodename}"})
     public void onMessage(ConsumerRecord<Integer, String> consumerRecord) {
         final var correlationId = getCorrelationID(consumerRecord);
         completeAction(correlationId, consumerRecord);
